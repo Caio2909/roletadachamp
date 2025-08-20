@@ -42,23 +42,20 @@ function App() {
 
   const generateTeams = () => {
     if (players.length < 2) {
-      alert("Adicione pelo menos 2 jogadores!")
       return
     }
 
-    setShowResults(false) // Garante que a UI atualize para a nova rodada
+    setShowResults(false)
     setRollCount(prev => prev + 1)
 
     let currentPlayers = [...players]
     let solo = null
 
-    // Lógica para jogador solo (mantida)
     if (currentPlayers.length % 2 !== 0) {
         const availableSoloPlayers = currentPlayers.filter(p => !soloPlayerHistory.includes(p));
         if (availableSoloPlayers.length > 0) {
             solo = availableSoloPlayers[Math.floor(Math.random() * availableSoloPlayers.length)];
         } else {
-            // Se todos já foram solo recentemente, pega um aleatório
             solo = currentPlayers[Math.floor(Math.random() * currentPlayers.length)];
         }
         currentPlayers = currentPlayers.filter(p => p !== solo);
@@ -67,7 +64,22 @@ function App() {
       setSoloPlayer(null)
     }
 
-    // 1. Gerar todas as duplas possíveis com os jogadores atuais
+    const findUniqueTeamSet = (playersToPair, pairs) => {
+      if (playersToPair.length === 0) return []
+      const player1 = playersToPair[0]
+      const potentialPairs = shuffleArray(pairs.filter(p => p.includes(player1)))
+      for (const pair of potentialPairs) {
+        const player2 = pair.find(p => p !== player1)
+        const remainingPlayers = playersToPair.filter(p => p !== player1 && p !== player2)
+        const remainingPairs = pairs.filter(p => !p.includes(player1) && !p.includes(player2))
+        const result = findUniqueTeamSet(remainingPlayers, remainingPairs)
+        if (result !== null) {
+          return [pair, ...result]
+        }
+      }
+      return null
+    }
+
     const allPossiblePairs = []
     for (let i = 0; i < currentPlayers.length; i++) {
       for (let j = i + 1; j < currentPlayers.length; j++) {
@@ -75,53 +87,41 @@ function App() {
       }
     }
 
-    // 2. Filtrar duplas que já foram sorteadas
+    // Tenta gerar times com as duplas inéditas
     const previousTeamsSet = new Set(previousTeams.map(team => JSON.stringify(team)))
-    let availablePairs = allPossiblePairs.filter(
+    const availablePairs = allPossiblePairs.filter(
       pair => !previousTeamsSet.has(JSON.stringify(pair))
     )
 
-    // 3. Se não houver duplas inéditas suficientes, reseta o histórico
-    if (availablePairs.length < currentPlayers.length / 2) {
-      setPreviousTeams([])
-      availablePairs = allPossiblePairs
+    let generatedTeams = findUniqueTeamSet(currentPlayers, availablePairs)
+    let isNewHistory = false
+
+    // Se falhar (histórico esgotado), entra na lógica de fallback
+    if (!generatedTeams) {
+      isNewHistory = true;
+      // Filtra para usar todas as duplas, EXCETO as da última rodada
+      const lastTeamsSet = new Set(teams.map(t => JSON.stringify(t)));
+      const pairsForFallback = allPossiblePairs.filter(
+        p => !lastTeamsSet.has(JSON.stringify(p))
+      );
+
+      // Tenta gerar com as duplas filtradas. Se não for possível (caso raro de haver apenas 1 combinação), usa todas.
+      generatedTeams = findUniqueTeamSet(currentPlayers, pairsForFallback) || findUniqueTeamSet(currentPlayers, allPossiblePairs);
     }
 
-    // 4. Função de busca (backtracking) para encontrar um conjunto de times válido
-    const findUniqueTeamSet = (playersToPair, pairs) => {
-      if (playersToPair.length === 0) {
-        return [] // Sucesso, todos foram emparelhados
-      }
+    setTeams(generatedTeams || []);
+    setSoloPlayer(solo);
 
-      const player1 = playersToPair[0]
-      const potentialPairs = shuffleArray(pairs.filter(p => p.includes(player1)))
-
-      for (const pair of potentialPairs) {
-        const player2 = pair.find(p => p !== player1)
-
-        const remainingPlayers = playersToPair.filter(p => p !== player1 && p !== player2)
-        const remainingPairs = pairs.filter(p => !p.includes(player1) && !p.includes(player2))
-
-        const result = findUniqueTeamSet(remainingPlayers, remainingPairs)
-
-        if (result !== null) {
-          return [pair, ...result] // Encontrou uma solução
-        }
-      }
-
-      return null // Não encontrou solução
-    }
-
-    const newTeams = findUniqueTeamSet(currentPlayers, availablePairs)
-
-    if (newTeams) {
-      setTeams(newTeams)
-      setSoloPlayer(solo)
-      setPreviousTeams(prev => [...prev, ...newTeams]) // Adiciona as novas duplas ao histórico
-      setShowResults(true)
+    // Atualiza o histórico de forma inteligente
+    if (isNewHistory) {
+      // Se o histórico foi resetado, ele começa de novo apenas com os times gerados agora
+      setPreviousTeams(generatedTeams || []);
     } else {
-      alert("Não foi possível gerar um conjunto de times único com os jogadores restantes. Tente novamente ou adicione mais jogadores.")
+      // Se não, apenas adiciona os novos times ao histórico existente
+      setPreviousTeams(prev => [...prev, ...(generatedTeams || [])]);
     }
+
+    setShowResults(true);
   }
 
   const reset = () => {
