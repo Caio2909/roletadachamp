@@ -83,7 +83,6 @@ function App() {
 
     // 3. Se não houver duplas inéditas suficientes, reseta o histórico
     if (availablePairs.length < currentPlayers.length / 2) {
-      alert("Todas as combinações de duplas possíveis foram usadas! O histórico será reiniciado.")
       setPreviousTeams([])
       availablePairs = allPossiblePairs
     }
@@ -138,7 +137,6 @@ function App() {
   const resetResults = () => {
     setTeams([])
     setSoloPlayer(null)
-    setRollCount(0)
     setShowResults(false)
   }
 
