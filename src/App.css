@@ -1,0 +1,331 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+  --radius: 0.625rem;
+  /* League of Legends Color Palette */
+  --lol-dark-blue: #0A1428;
+  --lol-blue: #1E2328;
+  --lol-gold: #C89B3C;
+  --lol-bright-blue: #0596AA;
+  --lol-purple: #7B68EE;
+  --lol-green: #00FF88;
+  --lol-red: #E74C3C;
+  
+  --background: var(--lol-dark-blue);
+  --foreground: #FFFFFF;
+  --card: var(--lol-blue);
+  --card-foreground: #FFFFFF;
+  --popover: var(--lol-blue);
+  --popover-foreground: #FFFFFF;
+  --primary: var(--lol-gold);
+  --primary-foreground: var(--lol-dark-blue);
+  --secondary: var(--lol-bright-blue);
+  --secondary-foreground: #FFFFFF;
+  --muted: var(--lol-blue);
+  --muted-foreground: #CCCCCC;
+  --accent: var(--lol-purple);
+  --accent-foreground: #FFFFFF;
+  --destructive: var(--lol-red);
+  --border: var(--lol-gold);
+  --input: var(--lol-blue);
+  --ring: var(--lol-gold);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--lol-dark-blue) 0%, var(--lol-blue) 100%);
+    min-height: 100vh;
+  }
+}
+
+/* League of Legends Inspired Styles */
+.lol-container {
+  background: linear-gradient(135deg, var(--lol-dark-blue) 0%, var(--lol-blue) 50%, var(--lol-dark-blue) 100%);
+  border: 2px solid var(--lol-gold);
+  border-radius: 0;
+  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+  position: relative;
+  overflow: hidden;
+}
+
+.lol-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 30%, rgba(200, 155, 60, 0.1) 50%, transparent 70%);
+  pointer-events: none;
+}
+
+.lol-title {
+  font-size: 3rem;
+  font-weight: 900;
+  background: linear-gradient(45deg, var(--lol-gold), #FFD700, var(--lol-gold));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 20px rgba(200, 155, 60, 0.5);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.lol-button {
+  background: linear-gradient(135deg, var(--lol-gold) 0%, #FFD700 50%, var(--lol-gold) 100%);
+  color: var(--lol-dark-blue);
+  border: 2px solid var(--lol-gold);
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.lol-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(200, 155, 60, 0.3);
+}
+
+.lol-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+}
+
+.lol-button:hover::before {
+  left: 100%;
+}
+
+.lol-input {
+  background: var(--lol-blue);
+  border: 2px solid var(--lol-gold);
+  color: white;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  padding: 12px 16px;
+  font-size: 16px;
+}
+
+.lol-input:focus {
+  outline: none;
+  box-shadow: 0 0 15px rgba(200, 155, 60, 0.5);
+  border-color: #FFD700;
+}
+
+.lol-input::placeholder {
+  color: #CCCCCC;
+}
+
+.roleta-container {
+  width: 300px;
+  height: 300px;
+  border: 4px solid var(--lol-gold);
+  border-radius: 50%;
+  position: relative;
+  background: radial-gradient(circle, var(--lol-blue) 0%, var(--lol-dark-blue) 70%);
+  box-shadow: 
+    0 0 30px rgba(200, 155, 60, 0.5),
+    inset 0 0 30px rgba(123, 104, 238, 0.3);
+}
+
+.roleta-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  position: relative;
+  overflow: hidden;
+  transition: transform 3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.roleta-section {
+  position: absolute;
+  width: 50%;
+  height: 50%;
+  transform-origin: 100% 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  border-right: 1px solid rgba(200, 155, 60, 0.3);
+  border-bottom: 1px solid rgba(200, 155, 60, 0.3);
+}
+
+.roleta-pointer {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-top: 20px solid var(--lol-gold);
+  z-index: 10;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.team-card {
+  background: linear-gradient(135deg, var(--lol-blue) 0%, var(--lol-dark-blue) 100%);
+  border: 2px solid var(--lol-gold);
+  clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
+  padding: 20px;
+  margin: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.team-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 30%, rgba(123, 104, 238, 0.1) 50%, transparent 70%);
+  pointer-events: none;
+}
+
+.team-title {
+  color: var(--lol-gold);
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+.player-name {
+  color: white;
+  font-size: 1.1rem;
+  margin: 5px 0;
+  padding: 5px 10px;
+  background: rgba(123, 104, 238, 0.2);
+  border-left: 3px solid var(--lol-purple);
+}
+
+.solo-player {
+  background: linear-gradient(135deg, var(--lol-red) 0%, #8B0000 100%);
+  border-color: var(--lol-red);
+}
+
+.solo-player .team-title {
+  color: #FFB6C1;
+}
+
+.glow-effect {
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 20px rgba(200, 155, 60, 0.5);
+  }
+  to {
+    box-shadow: 0 0 30px rgba(200, 155, 60, 0.8), 0 0 40px rgba(123, 104, 238, 0.3);
+  }
+}
+
+.spinning {
+  animation: spin 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(1440deg); /* 4 voltas completas */
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.particle-effect {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--lol-gold);
+  border-radius: 50%;
+  animation: particle 2s linear infinite;
+}
+
+@keyframes particle {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) scale(0);
+    opacity: 0;
+  }
+}
+
