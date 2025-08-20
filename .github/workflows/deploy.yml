@@ -17,6 +17,10 @@ jobs:
   # Tarefa de build e deploy
   deploy:
     runs-on: ubuntu-latest # Rodar em um ambiente Linux (Ubuntu)
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+      
     steps:
       # 1. Baixa o código do seu repositório
       - name: Checkout
