@@ -41,8 +41,8 @@ function App() {
   }
 
   const generateTeams = () => {
-    if (players.length < 2) {
-      alert('Adicione pelo menos 2 jogadores!')
+    if (players.length < 3) {
+      alert('Adicione pelo menos 3 jogadores!')
       return
     }
 
