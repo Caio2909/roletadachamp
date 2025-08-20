@@ -11,9 +11,9 @@ function App() {
   const [teams, setTeams] = useState([])
   const [soloPlayer, setSoloPlayer] = useState(null)
   const [soloPlayerHistory, setSoloPlayerHistory] = useState([])
+  const [previousTeams, setPreviousTeams] = useState([])
   const [rollCount, setRollCount] = useState(0)
   const [showResults, setShowResults] = useState(false)
-
   const addPlayer = () => {
     if (currentInput.trim() && !players.includes(currentInput.trim())) {
       setPlayers([...players, currentInput.trim()])
@@ -42,56 +42,84 @@ function App() {
 
   const generateTeams = () => {
     if (players.length < 2) {
-      alert('Adicione pelo menos 2 jogadores!')
+      alert("Adicione pelo menos 2 jogadores!")
       return
     }
 
-    const shuffledPlayers = shuffleArray(players)
-    const newTeams = []
-    let solo = null
-
-    // Incrementa o contador de rolagens
     const newRollCount = rollCount + 1
     setRollCount(newRollCount)
 
-    // Se número ímpar, um jogador fica sozinho
-    if (shuffledPlayers.length % 2 !== 0) {
-      // Após players.length rolagens, permite repetição dos últimos 2 jogadores solo
+    let currentPlayers = [...players]
+    let solo = null
+
+    // Lógica para jogador solo (mantida)
+    if (currentPlayers.length % 2 !== 0) {
       const shouldRestrictHistory = newRollCount <= players.length
       const restrictedPlayers = shouldRestrictHistory ? soloPlayerHistory : soloPlayerHistory.slice(-2)
-      
-      // Tenta escolher um jogador solo que não esteja na lista restrita
-      const availableSoloPlayers = shuffledPlayers.filter(player => !restrictedPlayers.includes(player))
+
+      const availableSoloPlayers = currentPlayers.filter(player => !restrictedPlayers.includes(player))
       if (availableSoloPlayers.length > 0) {
         const soloIndex = Math.floor(Math.random() * availableSoloPlayers.length)
         solo = availableSoloPlayers[soloIndex]
-        shuffledPlayers.splice(shuffledPlayers.indexOf(solo), 1)
+        currentPlayers.splice(currentPlayers.indexOf(solo), 1)
       } else {
-        // Se todos foram solo recentemente, ou não há opção, escolhe o último
-        solo = shuffledPlayers.pop()
+        solo = currentPlayers.pop()
       }
-      
-      // Mantém apenas os dois últimos jogadores solo no histórico
       setSoloPlayerHistory(prevHistory => {
         const newHistory = [...prevHistory, solo]
         return newHistory.slice(-2)
       })
     }
 
-    // Forma os times de 2
-    for (let i = 0; i < shuffledPlayers.length; i += 2) {
-      newTeams.push([shuffledPlayers[i], shuffledPlayers[i + 1]])
+    // Lógica para evitar duplas repetidas
+    let attempts = 0
+    const maxAttempts = 100 // Limite para evitar loops infinitos
+    let generatedTeams = []
+    let isUnique = false
+
+    while (!isUnique && attempts < maxAttempts) {
+      attempts++
+      const shuffledPlayersForTeams = shuffleArray(currentPlayers)
+      let tempTeams = []
+      for (let i = 0; i < shuffledPlayersForTeams.length; i += 2) {
+        const team = [shuffledPlayersForTeams[i], shuffledPlayersForTeams[i + 1]].sort()
+        tempTeams.push(team)
+      }
+      tempTeams.sort((a, b) => a[0].localeCompare(b[0])) // Ordena as duplas para comparação consistente
+
+      const teamSetString = JSON.stringify(tempTeams)
+
+      // Verifica se o conjunto de duplas já foi gerado
+      if (!previousTeams.includes(teamSetString)) {
+        generatedTeams = tempTeams
+        isUnique = true
+      }
     }
 
-    setTeams(newTeams)
+    if (!isUnique) {
+      alert("Não foi possível gerar um conjunto de times único após várias tentativas. Pode haver poucas combinações possíveis com os jogadores atuais.")
+      // Fallback: se não conseguir um único, aceita um não-único para não travar
+      const shuffledPlayersForTeams = shuffleArray(currentPlayers)
+      let tempTeams = []
+      for (let i = 0; i < shuffledPlayersForTeams.length; i += 2) {
+        const team = [shuffledPlayersForTeams[i], shuffledPlayersForTeams[i + 1]].sort()
+        tempTeams.push(team)
+      }
+      tempTeams.sort((a, b) => a[0].localeCompare(b[0]))
+      generatedTeams = tempTeams
+    }
+
+    setTeams(generatedTeams)
     setSoloPlayer(solo)
     setShowResults(true)
+    setPreviousTeams(prev => [...prev, JSON.stringify(generatedTeams)])
   }
 
   const reset = () => {
     setTeams([])
     setSoloPlayer(null)
     setSoloPlayerHistory([])
+    setPreviousTeams([])
     setRollCount(0)
     setShowResults(false)
     setPlayers([])
@@ -106,7 +134,7 @@ function App() {
 
   const copyTeamsToClipboard = () => {
     let textToCopy = "🎮 TIMES FORMADOS - ROLETA DA CHAMP\n\n"
-    
+
     teams.forEach((team, index) => {
       textToCopy += `⚔️ TIME ${index + 1}:\n`
       team.forEach(player => {
@@ -114,13 +142,13 @@ function App() {
       })
       textToCopy += "\n"
     })
-    
+
     if (soloPlayer) {
       textToCopy += `🔄 JOGADOR SOLO:\n• ${soloPlayer}\n(Aguarda próxima rodada ou entra como substituto)\n\n`
     }
-    
+
     textToCopy += "Inspirado no League of Legends Arena Mode\nBoa sorte na Fenda do Invocador! ⚔️"
-    
+
     navigator.clipboard.writeText(textToCopy).then(() => {
       alert('Times copiados para a área de transferência!')
     }).catch(err => {
@@ -139,7 +167,7 @@ function App() {
         <p className="text-center text-lg text-gray-300 mb-6">
           Gerador de Times para Arena - League of Legends
         </p>
-        
+
         {/* Input Section */}
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <Input
@@ -149,7 +177,7 @@ function App() {
             onChange={(e) => setCurrentInput(e.target.value)}
             onKeyPress={handleKeyPress}
           />
-          <Button 
+          <Button
             className="lol-button px-6"
             onClick={addPlayer}
             disabled={!currentInput.trim()}
@@ -193,7 +221,7 @@ function App() {
           >
             Formar Times
           </Button>
-          
+
           {showResults && (
             <Button
               className="lol-button px-6 py-3"
@@ -203,7 +231,7 @@ function App() {
               Nova Rodada
             </Button>
           )}
-          
+
           <Button
             className="lol-button px-6 py-3 bg-red-600 hover:bg-red-700"
             onClick={reset}
@@ -229,7 +257,7 @@ function App() {
               Copiar Times
             </Button>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {teams.map((team, index) => (
               <Card key={index} className="team-card">
@@ -243,7 +271,7 @@ function App() {
                 ))}
               </Card>
             ))}
-            
+
             {soloPlayer && (
               <Card className="team-card solo-player">
                 <div className="team-title flex items-center">
@@ -254,7 +282,7 @@ function App() {
                   {soloPlayer}
                 </div>
                 <p className="text-sm text-gray-300 mt-2">
-                  Jogará a Arena sozinho 😭
+                  Aguarda próxima rodada ou entra como substituto
                 </p>
               </Card>
             )}
@@ -272,4 +300,3 @@ function App() {
 }
 
 export default App
-
