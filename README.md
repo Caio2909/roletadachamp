@@ -91,7 +91,7 @@ O aplicativo é totalmente responsivo e funciona em:
 ## 🌐 Acesso Online
 
 O aplicativo está disponível permanentemente em:
-**https://dccwqsqf.manus.space**
+**https://caio2909.github.io**
 
 ## 🎮 Inspiração
 
