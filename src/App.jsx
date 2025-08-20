@@ -254,7 +254,7 @@ function App() {
                   {soloPlayer}
                 </div>
                 <p className="text-sm text-gray-300 mt-2">
-                  Aguarda próxima rodada ou entra como substituto
+                  Jogará a Arena sozinho 😭
                 </p>
               </Card>
             )}
