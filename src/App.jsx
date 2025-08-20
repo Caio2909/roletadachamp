@@ -116,7 +116,7 @@ function App() {
     })
     
     if (soloPlayer) {
-      textToCopy += `🔄 JOGADOR SOLO:\n• ${soloPlayer}\n(Aguarda próxima rodada ou entra como substituto)\n\n`
+      textToCopy += `🔄 JOGADOR SOLO:\n• ${soloPlayer}\n(Jogará sozinho)\n\n`
     }
     
     textToCopy += "Inspirado no League of Legends Arena Mode\nBoa sorte na Fenda do Invocador! ⚔️"
