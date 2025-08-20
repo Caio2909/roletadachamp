@@ -1,6 +1,6 @@
 {
   "name": "roleta-da-champ",
-  "homepage": "https://roletadachamp.github.io/",
+  "homepage": "https://Caio2909.github.io",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist --no-history"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
@@ -51,7 +51,7 @@
     "lucide-react": "^0.510.0",
     "next-themes": "^0.4.6",
     "react": "^19.1.0",
-    "react-day-picker": "8.10.1",
+    "react-day-picker": "^9.9.0",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.56.3",
     "react-resizable-panels": "^3.0.2",
