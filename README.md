@@ -91,7 +91,7 @@ O aplicativo é totalmente responsivo e funciona em:
 ## 🌐 Acesso Online
 
 O aplicativo está disponível permanentemente em:
-**https://caio2909.github.io**
+**https://caio2909.github.io/roletadachamp/**
 
 ## 🎮 Inspiração
 
